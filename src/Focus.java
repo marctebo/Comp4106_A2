@@ -75,6 +75,6 @@ public class Focus {
 			printBoard(move);
 			System.out.println();
 		}
-
+		System.out.println("GitStuff");
 	}
 }
