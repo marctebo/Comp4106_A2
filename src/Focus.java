@@ -62,19 +62,28 @@ public class Focus {
 			}
 			System.out.println();
 		}
+		System.out.println("Player 1 Potential Reserves: " + player1.getReserves(board));
+		System.out.println("Player 1 Potential Score: " + player1.getScore(board));
+		System.out.println("Player 2 Potential Reserves: " + player2.getReserves(board));
+		System.out.println("Player 2 Potential Score: " + player2.getScore(board));
 		
 	}
 	
 	public static void main(String args[]){
 		Focus focus = new Focus();
-		Player player = new Player(Piece.RED);
+		player1 = new Player(Piece.RED);
+		player2 = new Player(Piece.GREEN);
 		Piece temp = new Piece(Piece.RED);
-		temp.setScore(2);
+		temp.setScore(board[1][2].peek().getScore()+1);
 		board[1][2].push(temp);
-		for(Stack[][] move: player.getMoves(board)){
+		System.out.println("Initial Board");
+		printBoard(board);
+
+		for(Stack[][] move: player1.getMoves(board)){
 			printBoard(move);
 			System.out.println();
 		}
-		System.out.println("GitStuff");
+		System.out.println("Final Board");
+		printBoard(board);
 	}
 }
