@@ -75,7 +75,7 @@ public class Focus {
 		player2 = new Player(Piece.GREEN);
 		Piece temp = new Piece(Piece.RED);
 		temp.setScore(board[1][2].peek().getScore()+1);
-		board[1][2].push(temp);
+		//board[1][2].push(temp);
 		System.out.println("Initial Board");
 		printBoard(board);
 
@@ -85,5 +85,7 @@ public class Focus {
 		}
 		System.out.println("Final Board");
 		printBoard(board);
+		System.out.println("Total Moves available for Player 1: " + player1.getMoves(board).size());
+		System.out.println("Total Moves available for Player 2: " + player2.getMoves(board).size());
 	}
 }

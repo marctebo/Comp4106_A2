@@ -44,10 +44,12 @@ public class Player {
 								}
 							}
 						}
+						//get split moves
 					}
 				}
 			}
 		}
+		addSplitMoves(board);
 		return moves;
 	}
 	
@@ -119,7 +121,7 @@ public class Player {
 		Stack<Piece>[][] fake = copyBoard(board);
 		ArrayList<Piece> hold = new ArrayList<>();
 		Piece temp1 = new Piece();
-		for(int i = 0;i<fake[sx][sy].size();i++){
+		for(int i = 0;i<=fake[sx][sy].size();i++){
 			temp1 = (Piece)fake[sx][sy].pop();
 			hold.add(0,temp1);
 		}
@@ -128,19 +130,67 @@ public class Player {
 		for(Piece p: hold){
 			temp2.setType(p.getType());
 			temp2.setScore(fake[dx][dy].peek().getScore()+1);
-			//p.setScore(fake[dx][dy].peek().getScore()+1);
 			fake[dx][dy].push(temp2);
 		}
-		//temp2.setScore(temp1.getScore()+fake[dx][dy].peek().getScore());
 
-		//temp.setScore(temp.getScore()+1);
-		//fake[dx][dy].push(temp2);
+		if(moves!=null){
+			moves.add(fake);
+		}
+		
+	}
+	public void moveStack(Stack<Piece>[][] board,ArrayList<Piece> hold, int dx, int dy){
+		Stack<Piece>[][] fake = copyBoard(board);
+		Piece temp2 = new Piece();
+		for(Piece p: hold){
+			temp2.setType(p.getType());
+			temp2.setScore(fake[dx][dy].peek().getScore()+1);
+			fake[dx][dy].push(temp2);
+		}
 		if(moves!=null){
 			moves.add(fake);
 		}
 	}
 	
-	public void addSplitMoves(Stack[][] board, ArrayList<Stack[][]> moves){
-		
+	public void addSplitMoves(Stack[][] board){
+		Stack<Piece>[][] fake = copyBoard(board);
+		ArrayList<Piece> hold = new ArrayList<>();
+		for(int i=0;i<SIZE;i++){
+			for(int j=0;j<SIZE;j++){
+				if(fake[i][j]!=null){
+					if(fake[i][j].peek().getScore()> 1 && fake[i][j].peek().getType()==type){
+						for(int k = 1;k<fake[i][j].peek().getScore();k++){
+							for(int l = 0; l<k;l++){
+								hold.add(0,fake[i][j].pop());
+							}
+							for(int m = 1;m<=hold.size();m++){
+								if(i<SIZE-m){
+									if(fake[i+m][j]!=null){
+										moveStack(fake,hold,i+m,j);
+									}
+								}
+								if(i>=m){
+									if(fake[i-m][j]!=null){
+										moveStack(fake,hold,i-m,j);
+									}
+								}
+								if(j<SIZE-m){
+									if(fake[i][j+m]!=null){
+										moveStack(fake,hold,i,j+m);
+									}
+								}
+								if(j>=m){
+									if(fake[i][j-m]!=null){
+										moveStack(fake,hold,i,j-m);
+									}
+								}
+							}
+							for(Piece p:hold){
+								fake[i][j].push(p);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 }
