@@ -14,8 +14,9 @@ public class Focus {
 		int type = Piece.RED;
 		for(int i = 0; i< SIZE;i++){
 			for(int j = 0; j<SIZE;j++){
+				board[i][j] = new Stack<Piece>();
+				board[i][j].push(new Piece());
 				if((i!=0 && j!=0) && (i!=SIZE-1 && j!=SIZE-1)){
-					board[i][j] = new Stack<Piece>();
 					board[i][j].push(new Piece(type));
 					count++;
 					if(count == 2){
@@ -27,10 +28,6 @@ public class Focus {
 						}
 						count = 0;
 					}
-				}
-				else{
-					board[i][j] = new Stack<Piece>();
-					board[i][j].push(new Piece());
 				}
 			}
 		}
@@ -73,9 +70,18 @@ public class Focus {
 		Focus focus = new Focus();
 		player1 = new Player(Piece.RED);
 		player2 = new Player(Piece.GREEN);
-		Piece temp = new Piece(Piece.RED);
+		/*Piece temp = new Piece(Piece.RED);
 		temp.setScore(board[1][2].peek().getScore()+1);
-		//board[1][2].push(temp);
+		board[1][2].push(temp);
+		Piece temp2 = new Piece(Piece.RED);
+		temp2.setScore(board[1][2].peek().getScore()+1);
+		board[1][2].push(temp2);
+		Piece temp3 = new Piece(Piece.GREEN);
+		temp3.setScore(board[3][4].peek().getScore()+1);
+		board[3][4].push(temp3);
+		Piece temp4 = new Piece(Piece.GREEN);
+		temp4.setScore(board[3][4].peek().getScore()+1);
+		board[3][4].push(temp4);*/
 		System.out.println("Initial Board");
 		printBoard(board);
 

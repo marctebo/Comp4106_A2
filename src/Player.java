@@ -12,7 +12,7 @@ public class Player {
 		reserves = new ArrayList<Piece>();
 	}
 	
-	public ArrayList<Stack[][]> getMoves(Stack[][] board){
+	public ArrayList<Stack[][]> getMoves(Stack<Piece>[][] board){
 		moves = new ArrayList<Stack[][]>();
 		for(int i = 0; i<SIZE;i++){
 			for(int j=0; j<SIZE; j++){
@@ -123,9 +123,13 @@ public class Player {
 		Piece temp1 = new Piece();
 		for(int i = 0;i<=fake[sx][sy].size();i++){
 			temp1 = (Piece)fake[sx][sy].pop();
-			hold.add(0,temp1);
+			if(temp1.getScore()!=0){
+				hold.add(0,temp1);
+			}
+			else{
+				fake[sx][sy].push(temp1);
+			}
 		}
-		fake[sx][sy].push(new Piece());
 		Piece temp2 = new Piece();
 		for(Piece p: hold){
 			temp2.setType(p.getType());
@@ -146,22 +150,27 @@ public class Player {
 			temp2.setScore(fake[dx][dy].peek().getScore()+1);
 			fake[dx][dy].push(temp2);
 		}
+
 		if(moves!=null){
 			moves.add(fake);
 		}
 	}
 	
-	public void addSplitMoves(Stack[][] board){
+	public void addSplitMoves(Stack<Piece>[][] board){
 		Stack<Piece>[][] fake = copyBoard(board);
-		ArrayList<Piece> hold = new ArrayList<>();
+
 		for(int i=0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
 				if(fake[i][j]!=null){
 					if(fake[i][j].peek().getScore()> 1 && fake[i][j].peek().getType()==type){
 						for(int k = 1;k<fake[i][j].peek().getScore();k++){
+							ArrayList<Piece> hold = new ArrayList<>();
 							for(int l = 0; l<k;l++){
-								hold.add(0,fake[i][j].pop());
+								if(fake[i][j].peek().getScore()!=0){
+									hold.add(0,fake[i][j].pop());
+								}
 							}
+
 							for(int m = 1;m<=hold.size();m++){
 								if(i<SIZE-m){
 									if(fake[i+m][j]!=null){
