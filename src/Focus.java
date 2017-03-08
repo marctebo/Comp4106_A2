@@ -1,11 +1,17 @@
+import java.util.ArrayList;
 import java.util.Stack;
 
 public class Focus {
 	public static Stack<Piece>[][] board;
 	public static Player player1, player2;
 	public static final int SIZE = 8;
+	public static ArrayList<Stack[][]> executedMoves;
+
+
 	public Focus(){
 		generateBoard();
+		executedMoves = new ArrayList<Stack[][]>();
+		executedMoves.add(board);
 	}
 	
 	public void generateBoard(){
@@ -65,11 +71,34 @@ public class Focus {
 		System.out.println("Player 2 Potential Score: " + player2.getScore(board));
 		
 	}
-	
+	public void play(){
+		player1 = new Player(Piece.RED,this);
+		player2 = new Player(Piece.GREEN, this);
+		
+		while(player1.getTotalPieces(board)!=1 && player2.getTotalPieces(board)!=1){
+			player1.executeTurn(board);
+			printBoard(board);
+			player2.executeTurn(board);
+			printBoard(board);
+		}
+		
+	}
+	public static void changeBoard(Stack<Piece>[][] newBoard){
+		//Stack[][] fake = player1.copyBoard(newBoard);
+		//System.out.print("1. " +player1.checkIfPlayed(executedMoves, fake) + "  ");
+		board = newBoard;
+		executedMoves.add(board);
+		//System.out.print("2. " +player1.checkIfPlayed(executedMoves, player1.copyBoard(fake))+" " + executedMoves.size()+"\n");
+	}
+	public ArrayList<Stack[][]> getExecutedMoves() {
+		return executedMoves;
+	}
 	public static void main(String args[]){
 		Focus focus = new Focus();
-		player1 = new Player(Piece.RED);
+		focus.play();
+		/*player1 = new Player(Piece.RED);
 		player2 = new Player(Piece.GREEN);
+		printBoard(player1.bestMoveH1(player1.getMoves(board)));
 		/*Piece temp = new Piece(Piece.RED);
 		temp.setScore(board[1][2].peek().getScore()+1);
 		board[1][2].push(temp);
@@ -81,7 +110,7 @@ public class Focus {
 		board[3][4].push(temp3);
 		Piece temp4 = new Piece(Piece.GREEN);
 		temp4.setScore(board[3][4].peek().getScore()+1);
-		board[3][4].push(temp4);*/
+		board[3][4].push(temp4);
 		System.out.println("Initial Board");
 		printBoard(board);
 
@@ -92,6 +121,6 @@ public class Focus {
 		System.out.println("Final Board");
 		printBoard(board);
 		System.out.println("Total Moves available for Player 1: " + player1.getMoves(board).size());
-		System.out.println("Total Moves available for Player 2: " + player2.getMoves(board).size());
+		System.out.println("Total Moves available for Player 2: " + player2.getMoves(board).size());*/
 	}
 }

@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 public class Player {
@@ -6,10 +7,14 @@ public class Player {
 	public static final int SIZE = 8;
 	private ArrayList<Piece> reserves;
 	private ArrayList<Stack[][]> moves;
+	private ArrayList<Stack[][]> executedMoves;
+	private Focus focus;
 	
-	public Player(int type){
+	public Player(int type, Focus focus){
 		this.type = type;
+		this.focus = focus;
 		reserves = new ArrayList<Piece>();
+		executedMoves = new ArrayList<Stack[][]>();
 	}
 	
 	public ArrayList<Stack[][]> getMoves(Stack<Piece>[][] board){
@@ -86,7 +91,7 @@ public class Player {
 		return temp;
 	}
 	
-	public int getReserves(Stack[][] board){
+	public int getReserves(Stack<Piece>[][] board){
 		int count = 0;
 		for(int i = 0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
@@ -101,7 +106,7 @@ public class Player {
 		return count;
 	}
 	
-	public int getScore(Stack[][] board){
+	public int getScore(Stack<Piece>[][] board){
 		score = 0;
 		for(int i = 0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
@@ -137,7 +142,7 @@ public class Player {
 			fake[dx][dy].push(temp2);
 		}
 
-		if(moves!=null){
+		if(moves!=null && !checkIfPlayed(executedMoves,fake)){
 			moves.add(fake);
 		}
 		
@@ -151,7 +156,7 @@ public class Player {
 			fake[dx][dy].push(temp2);
 		}
 
-		if(moves!=null){
+		if(moves!=null && !checkIfPlayed(executedMoves,fake)){
 			moves.add(fake);
 		}
 	}
@@ -201,5 +206,97 @@ public class Player {
 				}
 			}
 		}
+	}
+	
+	public Stack<Piece>[][] bestMoveH1(ArrayList<Stack[][]> moves){
+		Player p2;
+		int max;
+		int min = 1000;
+		Stack<Piece>[][] lowest = new Stack[1][1];
+		Stack<Piece>[][] highest;
+		if(type == Piece.RED){
+			p2 = new Player(Piece.GREEN,focus);
+		}
+		else{
+			p2 = new Player(Piece.RED,focus);
+		}
+		for(Stack<Piece>[][] s: moves){
+			highest = new Stack[1][1];
+			max = -1;
+			for(Stack<Piece>[][] t:p2.getMoves(s)){
+				if(p2.getScore(t)>max){
+					max = p2.getScore(t);
+					highest = t;
+				}
+			}
+			if(getScore(highest)<min){
+				min = getScore(highest);
+				lowest = s;
+			}
+		}
+		return lowest;
+	}
+	
+	public Stack<Piece>[][] bestMoveH2(ArrayList<Stack[][]> moves){
+		Player p2;
+		int max;
+		int min = 1000;
+		Stack<Piece>[][] lowest = new Stack[1][1];
+		Stack<Piece>[][] highest;
+		if(type == Piece.RED){
+			p2 = new Player(Piece.GREEN,focus);
+		}
+		else{
+			p2 = new Player(Piece.RED,focus);
+		}
+		for(Stack<Piece>[][] s: moves){
+			highest = new Stack[1][1];
+			max = -1;
+			for(Stack<Piece>[][] t:p2.getMoves(s)){
+				if(p2.getTotalPieces(t)>max){
+					max = p2.getTotalPieces(t);
+					highest = t;
+				}
+			}
+			if(getTotalPieces(highest)<min){
+				min = getTotalPieces(highest);
+				lowest = s;
+			}
+		}
+		return lowest;
+	}
+	public int getTotalPieces(Stack<Piece>[][] board){
+		int total=0;
+		for(int i = 0;i<SIZE;i++){
+			for(int j=0;j<SIZE;j++){
+				if(board[i][j]!=null){
+					if(board[i][j].peek().getType()==type){
+						total++;
+					}
+				}
+			}
+		}
+		return total;
+	}
+	public boolean checkIfPlayed(ArrayList<Stack[][]> moves, Stack<Piece>[][] move){
+		for(Stack<Piece>[][] m: moves){
+			if(Arrays.deepEquals(move, m)){
+				return true;
+			}
+			
+		}
+		return false;
+	}
+	public void executeTurn(Stack<Piece>[][] board){
+		Stack<Piece>[][] bestMove;
+		getMoves(board);
+		if(type==Piece.RED){
+			bestMove = bestMoveH1(moves);
+		}
+		else{
+			bestMove = bestMoveH2(moves);
+		}
+		executedMoves.add(bestMove);
+		focus.changeBoard(bestMove);
 	}
 }
