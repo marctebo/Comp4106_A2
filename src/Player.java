@@ -129,7 +129,7 @@ public class Player {
 		ArrayList<Piece> hold = new ArrayList<>();
 		Piece temp1 = new Piece();
 		for(int i = 0;i<=fake[sx][sy].size();i++){
-			temp1 = (Piece)fake[sx][sy].pop();
+			temp1 = fake[sx][sy].pop();
 			if(temp1.getScore()!=0){
 				hold.add(0,temp1);
 			}
@@ -137,10 +137,10 @@ public class Player {
 				fake[sx][sy].push(temp1);
 			}
 		}
-		Piece temp2 = new Piece();
 		for(Piece p: hold){
+			Piece temp2 = new Piece();
 			temp2.setType(p.getType());
-			temp2.setScore(fake[dx][dy].peek().getScore()+1);
+			temp2.setScore(fake[dx][dy].size());
 			fake[dx][dy].push(temp2);
 		}
 
@@ -349,10 +349,11 @@ public class Player {
 	
 	public ArrayList<Piece> getReserves(Stack<Piece>[][] board){
 		Stack<Piece> temp = new Stack<Piece>();
-		Piece[] anArray = new Piece[15];
+		Piece[] anArray;
 		for(int i = 0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
 				if(board[i][j]!=null){
+					anArray = new Piece[board[i][j].size()];
 					int t = board[i][j].peek().getType();
 					int s = board[i][j].peek().getScore();
 					if(t==type && s>5){

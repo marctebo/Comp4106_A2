@@ -53,7 +53,7 @@ public class Focus {
 	public Stack[][] getBoard(){
 		return board;
 	}
-	public static void printBoard(Stack[][] board){
+	public static void printBoard(Stack<Piece>[][] board){
 		for(int i = 0; i< SIZE;i++){
 			for(int j = 0; j<SIZE;j++){
 				if(board[i][j] == null){
@@ -65,12 +65,42 @@ public class Focus {
 			}
 			System.out.println();
 		}
-
+		/*
+		for(int i = 0; i< SIZE;i++){
+			for(int j = 0; j<SIZE;j++){
+				if(board[i][j] != null){
+					if(board[i][j].peek().getScore()>1){
+						System.out.println(i + " " + j + "  " + board[i][j].toString() );
+					}
+				}
+			}
+			System.out.println();
+		}*/
 		System.out.println("Player 1 Score: " + player1.getScore(board));
 		System.out.println("Player 1 Reserves: " + player1.getReserves(board).toString());
 		System.out.println("Player 2 Score: " + player2.getScore(board));
 		System.out.println("Player 2 Reserves: " + player2.getReserves(board).toString());
 		
+	}
+	public static void fixBoard(Stack<Piece>[][] board){
+		Piece[] anArray;
+		Stack<Piece> temp;
+		for(int i = 0; i< SIZE;i++){
+			for(int j = 0; j<SIZE;j++){
+				if(board[i][j] != null){
+					if(board[i][j].peek().getScore()>1){
+						anArray = new Piece[board[i][j].size()];
+						temp = new Stack<Piece>();
+						board[i][j].copyInto(anArray);
+						for(int k = 0;k<anArray.length;k++){
+							anArray[k].setScore(k);
+							temp.push(anArray[k]);
+						}
+						board[i][j] = temp;
+					}
+				}
+			}
+		}
 	}
 	public void play(){
 		player1 = new Player(Piece.RED,this);
@@ -83,6 +113,26 @@ public class Focus {
 			player2.executeTurn(board);
 			player2.getReserves(board);
 			printBoard(board);
+			int countp1 = 0;
+			int countp2 = 0;
+			for(Piece p: player1.getReserves(board)){
+				if(p.getType()==player2.type){
+					countp1++;
+				}
+				if(countp1==9){
+					System.out.println("Player 1 Wins!");
+					return;
+				}
+			}
+			for(Piece p: player2.getReserves(board)){
+				if(p.getType()==player1.type){
+					countp2++;
+				}
+				if(countp2==9){
+					System.out.println("Player 2 Wins!");
+					return;
+				}
+			}
 		}
 		if(player1.getScore(board)>player2.getScore(board)){
 			System.out.println("Player 1 Wins!");
@@ -92,6 +142,7 @@ public class Focus {
 	}
 	public static void changeBoard(Stack<Piece>[][] newBoard){
 		board = newBoard;
+		//fixBoard(board);
 		executedMoves.add(board);
 
 	} 
