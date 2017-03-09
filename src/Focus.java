@@ -65,31 +65,36 @@ public class Focus {
 			}
 			System.out.println();
 		}
-		System.out.println("Player 1 Potential Reserves: " + player1.getReserves(board));
-		System.out.println("Player 1 Potential Score: " + player1.getScore(board));
-		System.out.println("Player 2 Potential Reserves: " + player2.getReserves(board));
-		System.out.println("Player 2 Potential Score: " + player2.getScore(board));
+
+		System.out.println("Player 1 Score: " + player1.getScore(board));
+		System.out.println("Player 1 Reserves: " + player1.getReserves(board).toString());
+		System.out.println("Player 2 Score: " + player2.getScore(board));
+		System.out.println("Player 2 Reserves: " + player2.getReserves(board).toString());
 		
 	}
 	public void play(){
 		player1 = new Player(Piece.RED,this);
 		player2 = new Player(Piece.GREEN, this);
 		
-		while(player1.getTotalPieces(board)!=1 && player2.getTotalPieces(board)!=1){
+		while(Math.abs(player1.getScore(board)- player2.getScore(board))<13){
 			player1.executeTurn(board);
+			player1.getReserves(board);
 			printBoard(board);
 			player2.executeTurn(board);
+			player2.getReserves(board);
 			printBoard(board);
 		}
-		
+		if(player1.getScore(board)>player2.getScore(board)){
+			System.out.println("Player 1 Wins!");
+			return;
+		}
+		System.out.println("Player 2 Wins!");
 	}
 	public static void changeBoard(Stack<Piece>[][] newBoard){
-		//Stack[][] fake = player1.copyBoard(newBoard);
-		//System.out.print("1. " +player1.checkIfPlayed(executedMoves, fake) + "  ");
 		board = newBoard;
 		executedMoves.add(board);
-		//System.out.print("2. " +player1.checkIfPlayed(executedMoves, player1.copyBoard(fake))+" " + executedMoves.size()+"\n");
-	}
+
+	} 
 	public ArrayList<Stack[][]> getExecutedMoves() {
 		return executedMoves;
 	}

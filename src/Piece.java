@@ -19,7 +19,8 @@ public class Piece {
 	}
 
 	public void setScore(int score) {
-		this.score = score;
+
+		this.score = Math.abs(score);
 	}
 
 	public int getType() {

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.Stack;
 
 public class Player {
@@ -19,6 +20,7 @@ public class Player {
 	
 	public ArrayList<Stack[][]> getMoves(Stack<Piece>[][] board){
 		moves = new ArrayList<Stack[][]>();
+		addReserveMoves(board,moves);
 		for(int i = 0; i<SIZE;i++){
 			for(int j=0; j<SIZE; j++){
 				if(board[i][j]!=null){
@@ -91,7 +93,7 @@ public class Player {
 		return temp;
 	}
 	
-	public int getReserves(Stack<Piece>[][] board){
+	public int getReserveCount(Stack<Piece>[][] board){
 		int count = 0;
 		for(int i = 0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
@@ -207,13 +209,33 @@ public class Player {
 			}
 		}
 	}
-	
+	public void addReserveMoves(Stack<Piece>[][] board,ArrayList<Stack[][]> moves){
+		Stack<Piece>[][] fake = copyBoard(board);
+		for(Piece p: reserves){
+			if(p.getType()==type){
+				for(int i = 0;i<SIZE;i++){
+					for(int j=0; j<SIZE;j++){
+						if(fake[i][j]!=null){
+							Piece temp = new Piece(p.getType());
+							temp.setScore(fake[i][j].peek().getScore()+1);
+							fake[i][j].push(temp);
+							moves.add(fake);
+							fake[i][j].pop();
+						}
+					}
+				}
+				return;
+			}
+		}
+		
+	}
 	public Stack<Piece>[][] bestMoveH1(ArrayList<Stack[][]> moves){
 		Player p2;
 		int max;
 		int min = 1000;
-		Stack<Piece>[][] lowest = new Stack[1][1];
-		Stack<Piece>[][] highest;
+		//int count = 0;
+		Stack<Piece>[][] alpha = focus.getBoard();
+		Stack<Piece>[][] beta = focus.getBoard();
 		if(type == Piece.RED){
 			p2 = new Player(Piece.GREEN,focus);
 		}
@@ -221,28 +243,41 @@ public class Player {
 			p2 = new Player(Piece.RED,focus);
 		}
 		for(Stack<Piece>[][] s: moves){
-			highest = new Stack[1][1];
 			max = -1;
 			for(Stack<Piece>[][] t:p2.getMoves(s)){
+				//if(p2.getScore(t) == min && count> 1){
+				//	break;
+				//}
 				if(p2.getScore(t)>max){
 					max = p2.getScore(t);
-					highest = t;
+					beta = t;
 				}
 			}
-			if(getScore(highest)<min){
-				min = getScore(highest);
-				lowest = s;
+			if(getScore(beta)<min){
+				min = getScore(beta);
+				alpha = s;
 			}
+			//count++;
 		}
-		return lowest;
+		if(getScore(focus.getBoard())==getScore(alpha)){
+			Random rand = new Random();
+			Stack[][] temp3 = moves.get(rand.nextInt(moves.size()-1));
+			while(getScore(temp3)<getScore(focus.getBoard())){
+				temp3 = moves.get(rand.nextInt(moves.size()-1));
+			}
+
+			return temp3;
+		}
+		return alpha;
 	}
 	
 	public Stack<Piece>[][] bestMoveH2(ArrayList<Stack[][]> moves){
 		Player p2;
 		int max;
 		int min = 1000;
-		Stack<Piece>[][] lowest = new Stack[1][1];
-		Stack<Piece>[][] highest;
+		int count = 0;
+		Stack<Piece>[][] alpha = focus.getBoard();
+		Stack<Piece>[][] beta = focus.getBoard();
 		if(type == Piece.RED){
 			p2 = new Player(Piece.GREEN,focus);
 		}
@@ -250,20 +285,32 @@ public class Player {
 			p2 = new Player(Piece.RED,focus);
 		}
 		for(Stack<Piece>[][] s: moves){
-			highest = new Stack[1][1];
 			max = -1;
 			for(Stack<Piece>[][] t:p2.getMoves(s)){
+				//if(p2.getTotalPieces(t)==min && count>1){
+				//	break;
+				//}
 				if(p2.getTotalPieces(t)>max){
 					max = p2.getTotalPieces(t);
-					highest = t;
+					beta = t;
 				}
 			}
-			if(getTotalPieces(highest)<min){
-				min = getTotalPieces(highest);
-				lowest = s;
+			if(getTotalPieces(beta)<min){
+				min = getTotalPieces(beta);
+				alpha = s;
 			}
+			//count++;
 		}
-		return lowest;
+		if(getTotalPieces(focus.getBoard())==getTotalPieces(alpha)){
+			Random rand = new Random();
+			Stack[][] temp3 = moves.get(rand.nextInt(moves.size()-1));
+			while(getTotalPieces(temp3)<getTotalPieces(focus.getBoard())){
+				temp3 = moves.get(rand.nextInt(moves.size()-1));
+			}
+
+			return temp3;
+		}
+		return alpha;
 	}
 	public int getTotalPieces(Stack<Piece>[][] board){
 		int total=0;
@@ -298,5 +345,48 @@ public class Player {
 		}
 		executedMoves.add(bestMove);
 		focus.changeBoard(bestMove);
+	}
+	
+	public ArrayList<Piece> getReserves(Stack<Piece>[][] board){
+		Stack<Piece> temp = new Stack<Piece>();
+		Piece[] anArray = new Piece[15];
+		for(int i = 0;i<SIZE;i++){
+			for(int j=0;j<SIZE;j++){
+				if(board[i][j]!=null){
+					int t = board[i][j].peek().getType();
+					int s = board[i][j].peek().getScore();
+					if(t==type && s>5){
+						int count = s-5;
+						board[i][j].copyInto(anArray);
+						
+						for(int k=1;k<=s;k++){
+							Piece temp2 = new Piece();
+							if(count>0){
+								anArray[k].setScore(1);
+								if(anArray[k].getType()!=type){
+									if(type == Piece.RED){
+										anArray[k].setType(Piece.GREEN);
+									}
+									else{
+										anArray[k].setType(Piece.RED);
+									}
+								}
+								reserves.add(anArray[k]);
+								count--;
+							}
+							else{
+								temp.push(anArray[0]);
+								temp2.setType(anArray[k].getType());
+								temp2.setScore(anArray[k].getScore()-(s-5));
+								temp.push(temp2);
+								
+							}
+						}
+						board[i][j] = temp;
+					}
+				}
+			}
+		}
+		return reserves;
 	}
 }
