@@ -106,39 +106,40 @@ public class Focus {
 		player1 = new Player(Piece.RED,this);
 		player2 = new Player(Piece.GREEN, this);
 		
-		while(Math.abs(player1.getScore(board)- player2.getScore(board))<13){
+		while(true){
 			player1.executeTurn(board);
 			player1.getReserves(board);
 			printBoard(board);
-			player2.executeTurn(board);
-			player2.getReserves(board);
-			printBoard(board);
 			int countp1 = 0;
-			int countp2 = 0;
 			for(Piece p: player1.getReserves(board)){
 				if(p.getType()==player2.type){
 					countp1++;
 				}
-				if(countp1==9){
+				if(countp1==8){
 					System.out.println("Player 1 Wins!");
 					return;
 				}
 			}
+			player2.executeTurn(board);
+			player2.getReserves(board);
+			printBoard(board);
+
+			int countp2 = 0;
 			for(Piece p: player2.getReserves(board)){
 				if(p.getType()==player1.type){
 					countp2++;
 				}
-				if(countp2==9){
+				if(countp2==8){
 					System.out.println("Player 2 Wins!");
 					return;
 				}
 			}
 		}
-		if(player1.getScore(board)>player2.getScore(board)){
+		/*if(player1.getScore(board)>player2.getScore(board)){
 			System.out.println("Player 1 Wins!");
 			return;
 		}
-		System.out.println("Player 2 Wins!");
+		System.out.println("Player 2 Wins!");*/
 	}
 	public static void changeBoard(Stack<Piece>[][] newBoard){
 		board = newBoard;

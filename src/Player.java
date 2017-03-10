@@ -20,10 +20,13 @@ public class Player {
 	
 	public ArrayList<Stack[][]> getMoves(Stack<Piece>[][] board){
 		moves = new ArrayList<Stack[][]>();
-		addReserveMoves(board,moves);
+		//addReserveMoves(board,moves);
 		for(int i = 0; i<SIZE;i++){
 			for(int j=0; j<SIZE; j++){
 				if(board[i][j]!=null){
+					if(board[i][j].isEmpty()){
+						board[i][j].push(new Piece());
+					}
 					Piece temp = (Piece)board[i][j].peek();
 					if(temp.getType()!=0){
 						//GENERATE MOVES HERE
@@ -113,6 +116,9 @@ public class Player {
 		for(int i = 0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
 				if(board[i][j]!=null){
+					if(board[i][j].isEmpty()){
+						board[i][j].push(new Piece());
+					}
 					Piece p = (Piece)board[i][j].peek();
 					if(p.getType() == type){
 						score+=p.getScore();
@@ -169,6 +175,9 @@ public class Player {
 		for(int i=0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
 				if(fake[i][j]!=null){
+					if(fake[i][j].isEmpty()){
+						fake[i][j].push(new Piece());
+					}
 					if(fake[i][j].peek().getScore()> 1 && fake[i][j].peek().getType()==type){
 						for(int k = 1;k<fake[i][j].peek().getScore();k++){
 							ArrayList<Piece> hold = new ArrayList<>();
@@ -233,7 +242,7 @@ public class Player {
 		Player p2;
 		int max;
 		int min = 1000;
-		//int count = 0;
+		int count = 0;
 		Stack<Piece>[][] alpha = focus.getBoard();
 		Stack<Piece>[][] beta = focus.getBoard();
 		if(type == Piece.RED){
@@ -245,9 +254,9 @@ public class Player {
 		for(Stack<Piece>[][] s: moves){
 			max = -1;
 			for(Stack<Piece>[][] t:p2.getMoves(s)){
-				//if(p2.getScore(t) == min && count> 1){
-				//	break;
-				//}
+				if(p2.getScore(t) == min && count> 1){
+					break;
+				}
 				if(p2.getScore(t)>max){
 					max = p2.getScore(t);
 					beta = t;
@@ -257,7 +266,7 @@ public class Player {
 				min = getScore(beta);
 				alpha = s;
 			}
-			//count++;
+			count++;
 		}
 		if(getScore(focus.getBoard())==getScore(alpha)){
 			Random rand = new Random();
@@ -287,9 +296,9 @@ public class Player {
 		for(Stack<Piece>[][] s: moves){
 			max = -1;
 			for(Stack<Piece>[][] t:p2.getMoves(s)){
-				//if(p2.getTotalPieces(t)==min && count>1){
-				//	break;
-				//}
+				if(p2.getTotalPieces(t)==min && count>1){
+					break;
+				}
 				if(p2.getTotalPieces(t)>max){
 					max = p2.getTotalPieces(t);
 					beta = t;
@@ -299,7 +308,7 @@ public class Player {
 				min = getTotalPieces(beta);
 				alpha = s;
 			}
-			//count++;
+			count++;
 		}
 		if(getTotalPieces(focus.getBoard())==getTotalPieces(alpha)){
 			Random rand = new Random();
@@ -317,6 +326,9 @@ public class Player {
 		for(int i = 0;i<SIZE;i++){
 			for(int j=0;j<SIZE;j++){
 				if(board[i][j]!=null){
+					if(board[i][j].isEmpty()){
+						board[i][j].push(new Piece());
+					}
 					if(board[i][j].peek().getType()==type){
 						total++;
 					}
