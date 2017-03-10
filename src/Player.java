@@ -182,6 +182,9 @@ public class Player {
 						for(int k = 1;k<fake[i][j].peek().getScore();k++){
 							ArrayList<Piece> hold = new ArrayList<>();
 							for(int l = 0; l<k;l++){
+								if(fake[i][j].isEmpty()){
+									fake[i][j].push(new Piece());
+								}
 								if(fake[i][j].peek().getScore()!=0){
 									hold.add(0,fake[i][j].pop());
 								}
